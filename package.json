@@ -21,7 +21,7 @@
     ],
     "scripts": {
         "start": "electron .",
-        "build": "electron-builder build && cp -f PKGBUILD dist/",
+        "build": "electron-builder build",
         "format": "prettier --write .",
         "update": "yarn upgrade-interactive --latest"
     },

@@ -6,4 +6,4 @@ Maintained for personal use.
 
 ### Installation
 
-Only for linux and PKGBUILD for arch. Others can figure it out themselves.
+Only for linux and AUR package for arch. Others can figure it out themselves.
