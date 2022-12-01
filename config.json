@@ -1,14 +1,10 @@
 {
-    "clientIds": {
-        "emby": "843293609960275968",
-        "jellyfin": "1012702875744485377"
-    },
-    "updateCheckInterval": 900000,
+    "clientId": "1047628687010431057",
     "maxLogFileSizeMB": 50,
     "discordConnectRetryMS": 30000,
-    "MBConnectRetryMS": 30000,
-    "presenceUpdateIntervalMS": 15000,
+    "JFConnectRetryMS": 30000,
+    "presenceUpdateIntervalMS": 5000,
     "maximumSessionInactivity": 300,
-    "iconUrl": "https://user-images.githubusercontent.com/36819562/73629369-c0b4a100-4607-11ea-84c8-ff6c73d5deba.png",
+    "iconUrl": "https://cdn.discordapp.com/app-icons/1047628687010431057/ab014cb4b74041dedaff3253b3bb17af.png?size=256",
     "logRetentionCount": 10
 }

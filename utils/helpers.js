@@ -1,18 +1,18 @@
-const clean = require('deep-cleaner');
+const { cleanBy } = require("deep-cleaner");
 
 /**
- * 
+ *
  * @param {Object} object the object to scrum
- * @param {string} keys the keys to filter from the object
+ * @param {string[]} keys the keys to filter from the object
  */
 exports.scrubObject = (object, ...keys) => {
-	const scrubbedObject = {};
-	
-	Object.assign(scrubbedObject, object);
+    const scrubbedObject = {};
 
-	clean(scrubbedObject, keys)
+    Object.assign(scrubbedObject, object);
 
-	return scrubbedObject;
-}
+    cleanBy(scrubbedObject, keys);
 
-exports.booleanToYN = (bool) => bool ? 'Yes' : 'No';
+    return scrubbedObject;
+};
+
+exports.booleanToYN = (bool) => (bool ? "Yes" : "No");

@@ -1,59 +1,59 @@
 * {
-	user-select: none;
+    user-select: none;
 }
 
 .container {
-	text-align: center;
+    text-align: center;
 }
 
 .content {
-	display: none;
+    display: block;
 }
 
 .splashScreen {
-	margin-top: 25px;
+    margin-top: 25px;
 }
 
 .row {
-	margin: 0;
+    margin: 0;
 }
 
 .btn {
-	width: 100%;
+    width: 100%;
 }
 
 .modal-title {
-	margin-top: 0 !important;
-	font-weight: 500;
+    margin-top: 0 !important;
+    font-weight: 500;
 }
 
 .modal {
-	height: 100%;
-	width: 90%;
+    height: 100%;
+    width: 90%;
 }
 
 .button-row {
-	margin-top: 14px;
+    margin-top: 14px;
 }
 
 .left-button {
-	padding-left: 0 !important;
+    padding-left: 0 !important;
 }
 
 .right-button {
-	padding-right: 0 !important;
+    padding-right: 0 !important;
 }
 
 .modal-content {
-	text-align: center;
+    text-align: center;
 }
 
 #closeModal:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 #msg {
-	color: red;
-	display: block;
-	margin-top: 5px;
+    color: red;
+    display: block;
+    margin-top: 5px;
 }

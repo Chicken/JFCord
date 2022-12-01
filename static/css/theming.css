@@ -1,47 +1,53 @@
-.switch label input[type='checkbox']:checked + .lever:after {
-	background-color: var(--color);
+:root {
+    --color: #7289da;
+    --color-accent: rgba(114, 137, 218, 0.15);
 }
 
-.switch label input[type='checkbox']:checked + .lever {
-	background-color: var(--color-accent);
+.switch label input[type="checkbox"]:checked + .lever:after {
+    background-color: var(--color);
+}
+
+.switch label input[type="checkbox"]:checked + .lever {
+    background-color: var(--color-accent);
 }
 
 .switch label .lever:before {
-	background-color: var(--color-accent);
+    background-color: var(--color-accent);
 }
 
 .btn,
 .btn:hover,
 .btn:focus {
-  background-color: var(--color);
+    background-color: var(--color);
 }
 
 .progress .indeterminate {
-	background-color: var(--color) !important;
+    background-color: var(--color) !important;
 }
 
 .progress {
-	background-color: var(--color-accent);
+    background-color: var(--color-accent);
 }
 
 #reload > i {
-	color: var(--color);
+    color: var(--color);
 }
 
 .input-field input:focus + label {
-	color: var(--color) !important;
+    color: var(--color) !important;
 }
 
 input:focus {
-	border-bottom: 1px solid var(--color) !important;
-	box-shadow: 0 1px 0 0 var(--color) !important;
+    border-bottom: 1px solid var(--color) !important;
+    box-shadow: 0 1px 0 0 var(--color) !important;
 }
 
 li > span {
-	color: var(--color) !important;
+    color: var(--color) !important;
 }
 
-.tabs .tab a:hover, .tabs .tab a.active {
+.tabs .tab a:hover,
+.tabs .tab a.active {
     color: var(--color) !important;
 }
 
@@ -49,7 +55,8 @@ li > span {
     background-color: var(--color) !important;
 }
 
-.tabs .tab a:focus, .tabs .tab a:focus.active {
+.tabs .tab a:focus,
+.tabs .tab a:focus.active {
     background-color: var(--color-accent) !important;
 }
 
@@ -57,7 +64,7 @@ li > span {
     color: var(--color) !important;
 }
 
-[type="checkbox"].filled-in:checked+span:not(.lever):after {
-	border: 2px solid var(--color) !important;
-	background-color: var(--color) !important;
+[type="checkbox"].filled-in:checked + span:not(.lever):after {
+    border: 2px solid var(--color) !important;
+    background-color: var(--color) !important;
 }

@@ -1,72 +1,80 @@
 {
-  "name": "mbcord",
-  "version": "3.0.5",
-  "description": "An Emby/Jellyfin rich presence client for Discord",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "release": "electron-builder --publish always"
-  },
-  "author": {
-    "name": "SandwichFox",
-    "email": "sandwichfox@team.fuly.network",
-    "url": "https://sandwichfox.de"
-  },
-  "contributor": {
-    "name": "SoftwareRat",
-    "email": "softwarerat@sandwichfox.de",
-    "url": "https://softwarerat.xyz"
-  },
-  "build": {
-    "win": {
-      "icon": "icons/win/icon.ico",
-      "publish": "github"
+    "name": "jfcord",
+    "version": "4.0.0",
+    "description": "An Jellyfin rich presence client for Discord",
+    "main": "main.js",
+    "license": "MIT",
+    "author": "Antti <antti@antti.codes>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Chicken/JFCord.git"
     },
-    "mac": {
-      "category": "public.app-category.utilities",
-      "icon": "icons/mac/icon.icns",
-      "publish": "github"
+    "homepage": "https://github.com/Chicken/JFCord#readme",
+    "bugs": {
+        "url": "https://github.com/Chicken/JFCord/issues"
     },
-    "linux": {
-      "category": "Utility",
-      "icon": "icons/large.png",
-      "target": [
-        "AppImage",
-        "deb"
-      ],
-      "publish": "github"
+    "keywords": [
+        "jellyfin",
+        "discord",
+        "rich",
+        "presence"
+    ],
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder build",
+        "format": "prettier --write .",
+        "update": "yarn upgrade-interactive --latest"
+    },
+    "build": {
+        "linux": {
+            "category": "Utility",
+            "icon": "icons/large.png",
+            "target": [
+                "AppImage"
+            ]
+        }
+    },
+    "prettier": {
+        "printWidth": 120,
+        "tabWidth": 4,
+        "semi": true,
+        "singleQuote": false,
+        "quoteProps": "consistent",
+        "trailingComma": "es5",
+        "bracketSpacing": true,
+        "arrowParens": "always",
+        "endOfLine": "lf"
+    },
+    "devDependencies": {
+        "electron": "^22.0.0",
+        "electron-builder": "^23.6.0",
+        "electron-packager": "^17.1.1",
+        "node-gyp": "^9.3.0",
+        "prettier": "^2.8.0",
+        "rimraf": "^3.0.2"
+    },
+    "dependencies": {
+        "@electron/get": "^2.0.2",
+        "@materializecss/materialize": "1.1.0",
+        "@types/bent": "^7.3.2",
+        "bent": "^7.3.12",
+        "colorette": "^2.0.19",
+        "dedent-js": "^1.0.1",
+        "deep-cleaner": "^2.0.0-alpha.3",
+        "discord-rpc": "^4.0.1",
+        "electron-context-menu": "^3.6.0",
+        "electron-store": "^8.1.0",
+        "electron-unhandled": "^4.0.1",
+        "electron-util": "^0.17.2",
+        "got": "^12.5.3",
+        "json-stringify-safe": "^5.0.1",
+        "keytar": "^7.9.0",
+        "lodash": "^4.17.21",
+        "material-icons": "^1.12.2",
+        "minimatch": "^5.1.1",
+        "mkdirp": "^1.0.4",
+        "semver": "^7.3.8",
+        "untildify": "^4.0.0",
+        "uuid": "^9.0.0"
     }
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "electron": "^21.2.3",
-    "electron-builder": "^23.6.0",
-    "electron-packager": "^17.1.1",
-    "rimraf": "^3.0.2",
-    "yarn-upgrade-all": "^0.7.1"
-  },
-  "dependencies": {
-    "@electron/get": "^2.0.2",
-    "@materializecss/materialize": "^1.1.0",
-    "colors": "^1.4.0",
-    "dedent-js": "^1.0.1",
-    "deep-cleaner": "^1.2.1",
-    "discord-rpc": "^4.0.1",
-    "electron-context-menu": "^3.6.0",
-    "electron-store": "^8.0.0",
-    "electron-unhandled": "^4.0.1",
-    "electron-util": "^0.17.2",
-    "got": "^12.5.2",
-    "json-stringify-safe": "^5.0.1",
-    "keytar": "^7.7.0",
-    "lodash": "^4.17.12",
-    "material-icons": "^1.12.1",
-    "minimatch": "^5.1.0",
-    "mkdirp": "^1.0.4",
-    "request": "^2.88.2",
-    "semver": "^7.3.8",
-    "untildify": "^4.0.0",
-    "uuid": "^9.0.0"
-  },
-  "homepage": "https://github.com/SandwichFox/MBCord"
 }
