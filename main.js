@@ -446,15 +446,18 @@ let connectRPCTimeout;
         if (rpc) {
             logger.info("Disconnecting from Discord");
             clearTimeout(connectRPCTimeout);
-            rpc.removeAllListeners("close");
-            await rpc.clearActivity();
-            await rpc.destroy();
+            const rpcc = rpc;
             rpc = null;
+            // @ts-expect-error
+            rpcc.transport.removeAllListeners("close");
+            await rpcc.clearActivity().catch(() => null);
+            await rpcc.destroy().catch(() => null);
         }
     };
 
     const connectRPC = () => {
         return new Promise((resolve) => {
+            connectRPCTimeout = null;
             if (rpc) return logger.warn("Attempted to connect to RPC pipe while already connected");
 
             const server = getSelectedServer();
@@ -470,19 +473,25 @@ let connectRPCTimeout;
                         } seconds`
                     );
                     logger.error(e);
+                    rpc = null;
+                    connectRPCTimeout = setTimeout(connectRPC, discordConnectRetryMS);
                 });
 
-            rpc.once("close", () => {
+            // @ts-expect-error
+            rpc.transport.once("close", () => {
                 disconnectRPC();
 
-                logger.warn(
-                    `Discord RPC connection closed. Attempting to reconnect in ${discordConnectRetryMS / 1000} seconds`
-                );
+                if (!connectRPCTimeout) {
+                    logger.warn(
+                        `Discord RPC connection closed. Attempting to reconnect in ${discordConnectRetryMS / 1000} seconds`
+                    );
 
-                connectRPCTimeout = setTimeout(connectRPC, discordConnectRetryMS);
+                    connectRPCTimeout = setTimeout(connectRPC, discordConnectRetryMS);
+                }
             });
 
-            rpc.once("open", () => {
+            // @ts-expect-error
+            rpc.transport.once("open", () => {
                 logger.info(`Connected to Discord`);
             });
         });
