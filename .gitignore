@@ -1,8 +1,7 @@
 # dev
 node_modules/
 build/
-dist/*
-!dist/PKGBUILD
+dist/
 
 # node
 package-lock.json
