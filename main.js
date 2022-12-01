@@ -439,13 +439,6 @@ let connectRPCTimeout;
         tray.setToolTip(name);
         tray.setContextMenu(contextMenu);
 
-        if (!is.development)
-            new Notification({
-                title: `${name} ${version}`,
-                icon: path.join(__dirname, "icons", "large.png"),
-                body: `${name} has been minimized to the tray`,
-            }).show();
-
         appBarHide(true);
     };
 
