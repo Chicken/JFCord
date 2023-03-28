@@ -21,8 +21,8 @@
     ],
     "scripts": {
         "start": "electron .",
-        "build": "electron-builder build",
-        "release": "electron-builder --publish always",
+        "build": "electron-builder build -l -w",
+        "release": "electron-builder build -l -w --publish always",
         "format": "prettier --write .",
         "update": "yarn upgrade-interactive --latest"
     },
@@ -32,6 +32,13 @@
             "icon": "icons/large.png",
             "target": [
                 "AppImage"
+            ],
+            "publish": "github"
+        },
+        "win": {
+            "icon": "icons/large.png",
+            "target": [
+                "nsis"
             ],
             "publish": "github"
         }

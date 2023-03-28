@@ -1,9 +1,10 @@
-# JFCord (fork from SandwichFox which forks from oonqt)
+# JFCord
 
 ## JFCord is a Discord rich presence client for [Jellyfin](https://jellyfin.org)
 
-Maintained for personal use.
+Maintained for personal use.  
+Forked from SandwichFox which forks from oonqt.
 
 ### Installation
 
-Only for linux and AUR package for arch. Others can figure it out themselves.
+Install from AUR if on arch. Download from GitHub releases if not. Or maybe even build it yourself.
