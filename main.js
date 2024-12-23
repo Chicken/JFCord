@@ -619,7 +619,7 @@ let connectRPCTimeout;
 
                         await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.SeriesName}${NPItem.SeasonName ? ` - ${NPItem.SeasonName}` : ""}`,
+                            details: `${NPItem.SeriesName}${NPItem.SeasonName ? ` ${NPItem.SeasonName}` : ""}`,
                             state: `${seasonNum ? `S${seasonNum}:` : ""}${episodeNum ? `E${episodeNum} - ` : ""}${
                                 NPItem.Name
                             }`,
