@@ -11,7 +11,7 @@ const { v4 } = require("uuid");
 const Store = require("electron-store");
 const keytar = require("keytar");
 const JFClient = require("./utils/JFClient");
-globalThis.ReadableStream = require("readable-stream-polyfill").ReadableStream;
+globalThis.ReadableStream = require("web-streams-polyfill").ReadableStream;
 const DiscordRPC = require("@xhayper/discord-rpc");
 const Logger = require("./utils/logger");
 const { scrubObject, booleanToYN } = require("./utils/helpers");
@@ -87,6 +87,10 @@ let connectRPCTimeout;
             showExternalButtons: {
                 type: "boolean",
                 default: false,
+            },
+            pausedShowProgress: {
+                type: "boolean",
+                default: true,
             },
             UUID: {
                 type: "string",
@@ -372,6 +376,16 @@ let connectRPCTimeout;
                 },
             },
             {
+                label: "Show progress while paused",
+                type: "checkbox",
+                checked: /** @type {boolean} */ (store.get("pausedShowProgress")),
+                click: () => {
+                    const isUsing = store.get("pausedShowProgress");
+
+                    store.set({ pausedShowProgress: !isUsing });
+                },
+            },
+            {
                 type: "separator",
             },
             {
@@ -533,6 +547,8 @@ let connectRPCTimeout;
         if (!store.get("doDisplayStatus")) return logger.debug("doDisplayStatus disabled, not setting status");
 
         const showExternalButtons = /** @type {boolean} */ (store.get("showExternalButtons"));
+        const pausedShowProgress = /** @type {boolean} */ (store.get("pausedShowProgress"));
+
         const server = getSelectedServer();
         if (!server) return logger.warn("No selected server");
 
@@ -583,7 +599,7 @@ let connectRPCTimeout;
                     type: 3, // Watching
                     endTimestamp: 1, // Discord by default does calculate time elapsed, but only shows it to other users. So set to epoch + 1 it will stay at 00:00
                 };
-                if (!session.PlayState.IsPaused) {
+                if (!session.PlayState.IsPaused || pausedShowProgress) {
                     defaultProperties.startTimestamp = startTimestamp;
                     defaultProperties.endTimestamp = endTimestamp;
                 }
