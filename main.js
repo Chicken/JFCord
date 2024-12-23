@@ -366,7 +366,7 @@ let connectRPCTimeout;
                 checked: /** @type {boolean} */ (store.get("doDisplayStatus")),
             },
             {
-                label: "Show external buttons (IMDb...)",
+                label: "Show external buttons (IMDb, ...)",
                 type: "checkbox",
                 checked: /** @type {boolean} */ (store.get("showExternalButtons")),
                 click: () => {
@@ -470,7 +470,7 @@ let connectRPCTimeout;
         }
     };
 
-    const connectRPC = () => {
+    const connectRPC = (outterResolve = null) => {
         return new Promise((resolve) => {
             connectRPCTimeout = null;
             if (rpc) return logger.warn("Attempted to connect to RPC pipe while already connected");
@@ -481,6 +481,7 @@ let connectRPCTimeout;
 
             rpc.once("ready", () => {
                 logger.info(`RPC client ready`);
+                if (outterResolve) outterResolve();
                 resolve();
             });
 
@@ -507,6 +508,8 @@ let connectRPCTimeout;
                 );
                 logger.error(e);
                 rpc = null;
+                if (connectRPCTimeout) clearTimeout(connectRPCTimeout);
+                connectRPCTimeout = setTimeout(connectRPC, discordConnectRetryMS, outterResolve ?? resolve);
             });
         });
     };
