@@ -11,7 +11,7 @@ const { v4 } = require("uuid");
 const Store = require("electron-store");
 const keytar = require("keytar");
 const JFClient = require("./utils/JFClient");
-globalThis.ReadableStream = require('readable-stream-polyfill').ReadableStream;
+globalThis.ReadableStream = require("readable-stream-polyfill").ReadableStream;
 const DiscordRPC = require("@xhayper/discord-rpc");
 const Logger = require("./utils/logger");
 const { scrubObject, booleanToYN } = require("./utils/helpers");
@@ -465,7 +465,7 @@ let connectRPCTimeout;
             if (!server) return logger.warn("No selected server");
             rpc = new DiscordRPC.Client({ transport: "ipc", clientId });
 
-            rpc.once('ready', () => {
+            rpc.once("ready", () => {
                 logger.info(`RPC client ready`);
                 resolve();
             });
@@ -487,16 +487,13 @@ let connectRPCTimeout;
                 logger.info(`Connected to Discord`);
             });
 
-            rpc.login()
-                .catch((e) => {
-                    logger.error(
-                        `Failed to connect to Discord. Attempting to reconnect in ${
-                            discordConnectRetryMS / 1000
-                        } seconds`
-                    );
-                    logger.error(e);
-                    rpc = null;
-                });
+            rpc.login().catch((e) => {
+                logger.error(
+                    `Failed to connect to Discord. Attempting to reconnect in ${discordConnectRetryMS / 1000} seconds`
+                );
+                logger.error(e);
+                rpc = null;
+            });
         });
     };
 
@@ -519,7 +516,7 @@ let connectRPCTimeout;
 
         try {
             await jfc.login();
-            logger.info('Logged in to Jellyfin');
+            logger.info("Logged in to Jellyfin");
         } catch (err) {
             logger.error("Failed to authenticate. Retrying in 30 seconds.");
             logger.error(err);
@@ -595,7 +592,7 @@ let connectRPCTimeout;
                     NPItem.ExternalUrls.forEach((externalUrl, externalUrlIndex) => {
                         if (externalUrlIndex >= 2) return;
                         defaultProperties.buttons.push({ label: `View on ${externalUrl.Name}`, url: externalUrl.Url });
-                    })
+                    });
                 }
 
                 switch (NPItem.Type) {
@@ -607,10 +604,10 @@ let connectRPCTimeout;
 
                         await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.SeriesName}${seasonNum > 1 ? ` ${NPItem.SeasonName}` : ''}`,
-                            state: `${
-                                seasonNum ? `S1${seasonNum}:` : ""
-                            }${episodeNum ? `E${episodeNum}` : ""} - ${NPItem.Name}`,
+                            details: `${NPItem.SeriesName}${seasonNum > 1 ? ` ${NPItem.SeasonName}` : ""}`,
+                            state: `${seasonNum ? `S1${seasonNum}:` : ""}${episodeNum ? `E${episodeNum}` : ""} - ${
+                                NPItem.Name
+                            }`,
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.SeriesId}/Images/Primary`,
                         });
                         break;
