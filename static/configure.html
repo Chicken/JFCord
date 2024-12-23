@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="css/configure.css" />
         <link rel="stylesheet" href="css/theming.css" />
     </head>
+
     <body>
         <div class="content">
             <div class="container">
@@ -17,8 +18,8 @@
                     <div class="row">
                         <div class="input-field col s2">
                             <select id="protocol">
-                                <option value="http" selected>http://</option>
-                                <option value="https">https://</option>
+                                <option value="http">http://</option>
+                                <option value="https" selected>https://</option>
                             </select>
                             <label for="protocol">Protocol</label>
                         </div>
@@ -27,7 +28,7 @@
                             <label for="serverAddress">Server Address</label>
                         </div>
                         <div class="input-field col s2">
-                            <input type="number" id="port" value="8096" />
+                            <input type="number" id="port" value="443" />
                             <label for="port">Port</label>
                         </div>
                     </div>
