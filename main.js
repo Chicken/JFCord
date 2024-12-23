@@ -11,7 +11,8 @@ const { v4 } = require("uuid");
 const Store = require("electron-store");
 const keytar = require("keytar");
 const JFClient = require("./utils/JFClient");
-const DiscordRPC = require("discord-rpc");
+globalThis.ReadableStream = require('readable-stream-polyfill').ReadableStream;
+const DiscordRPC = require("@xhayper/discord-rpc");
 const Logger = require("./utils/logger");
 const { scrubObject, booleanToYN } = require("./utils/helpers");
 const { version, name } = require("./package.json");
@@ -83,7 +84,7 @@ let connectRPCTimeout;
                 type: "boolean",
                 default: false,
             },
-            useTimeElapsed: {
+            showExternalButtons: {
                 type: "boolean",
                 default: false,
             },
@@ -200,7 +201,7 @@ let connectRPCTimeout;
         const doDisplay = store.get("doDisplayStatus");
 
         logger.debug(`doDisplayStatus: ${doDisplay}`);
-        if (!doDisplay && rpc) await rpc.clearActivity();
+        if (!doDisplay && rpc) await rpc.user?.clearActivity();
     };
 
     /**
@@ -361,13 +362,13 @@ let connectRPCTimeout;
                 checked: /** @type {boolean} */ (store.get("doDisplayStatus")),
             },
             {
-                label: "Use Time Elapsed",
+                label: "Show external buttons (IMDb...)",
                 type: "checkbox",
-                checked: /** @type {boolean} */ (store.get("useTimeElapsed")),
+                checked: /** @type {boolean} */ (store.get("showExternalButtons")),
                 click: () => {
-                    const isUsing = store.get("useTimeElapsed");
+                    const isUsing = store.get("showExternalButtons");
 
-                    store.set({ useTimeElapsed: !isUsing });
+                    store.set({ showExternalButtons: !isUsing });
                 },
             },
             {
@@ -450,7 +451,7 @@ let connectRPCTimeout;
             rpc = null;
             // @ts-expect-error
             rpcc.transport.removeAllListeners("close");
-            await rpcc.clearActivity().catch(() => null);
+            await rpcc.user?.clearActivity().catch(() => null);
             await rpcc.destroy().catch(() => null);
         }
     };
@@ -462,30 +463,21 @@ let connectRPCTimeout;
 
             const server = getSelectedServer();
             if (!server) return logger.warn("No selected server");
+            rpc = new DiscordRPC.Client({ transport: "ipc", clientId });
 
-            rpc = new DiscordRPC.Client({ transport: "ipc" });
-            rpc.login({ clientId })
-                .then(resolve)
-                .catch((e) => {
-                    logger.error(
-                        `Failed to connect to Discord. Attempting to reconnect in ${
-                            discordConnectRetryMS / 1000
-                        } seconds`
-                    );
-                    logger.error(e);
-                    rpc = null;
-                    connectRPCTimeout = setTimeout(connectRPC, discordConnectRetryMS);
-                });
+            rpc.once('ready', () => {
+                logger.info(`RPC client ready`);
+                resolve();
+            });
 
             // @ts-expect-error
             rpc.transport.once("close", () => {
                 disconnectRPC();
+                logger.warn(
+                    `Discord RPC connection closed. Attempting to reconnect in ${discordConnectRetryMS / 1000} seconds`
+                );
 
                 if (!connectRPCTimeout) {
-                    logger.warn(
-                        `Discord RPC connection closed. Attempting to reconnect in ${discordConnectRetryMS / 1000} seconds`
-                    );
-
                     connectRPCTimeout = setTimeout(connectRPC, discordConnectRetryMS);
                 }
             });
@@ -494,6 +486,17 @@ let connectRPCTimeout;
             rpc.transport.once("open", () => {
                 logger.info(`Connected to Discord`);
             });
+
+            rpc.login()
+                .catch((e) => {
+                    logger.error(
+                        `Failed to connect to Discord. Attempting to reconnect in ${
+                            discordConnectRetryMS / 1000
+                        } seconds`
+                    );
+                    logger.error(e);
+                    rpc = null;
+                });
         });
     };
 
@@ -516,6 +519,7 @@ let connectRPCTimeout;
 
         try {
             await jfc.login();
+            logger.info('Logged in to Jellyfin');
         } catch (err) {
             logger.error("Failed to authenticate. Retrying in 30 seconds.");
             logger.error(err);
@@ -531,7 +535,7 @@ let connectRPCTimeout;
         if (!rpc || !jfc) return logger.debug("No rpc or jfc");
         if (!store.get("doDisplayStatus")) return logger.debug("doDisplayStatus disabled, not setting status");
 
-        const useTimeElapsed = /** @type {boolean} */ (store.get("useTimeElapsed"));
+        const showExternalButtons = /** @type {boolean} */ (store.get("showExternalButtons"));
         const server = getSelectedServer();
         if (!server) return logger.warn("No selected server");
 
@@ -553,7 +557,6 @@ let connectRPCTimeout;
 
             if (session) {
                 const NPItem = session.NowPlayingItem;
-
                 // remove client IP addresses (hopefully this takes care of all of them)
                 logger.debug(scrubObject(session, "RemoteEndPoint"));
 
@@ -580,41 +583,49 @@ let connectRPCTimeout;
                     smallImageKey: session.PlayState.IsPaused ? "pause" : "play",
                     smallImageText: session.PlayState.IsPaused ? "Paused" : "Playing",
                     instance: false,
+                    type: 3, // Watching
+                    endTimestamp: 1, // Discord by default does calculate time elapsed, but only shows it to other users. So set to epoch + 1 it will stay at 00:00
                 };
                 if (!session.PlayState.IsPaused) {
-                    useTimeElapsed
-                        ? (defaultProperties.startTimestamp = startTimestamp)
-                        : (defaultProperties.endTimestamp = endTimestamp);
+                    defaultProperties.startTimestamp = startTimestamp;
+                    defaultProperties.endTimestamp = endTimestamp;
+                }
+                if (showExternalButtons && NPItem.ExternalUrls) {
+                    defaultProperties.buttons = [];
+                    NPItem.ExternalUrls.forEach((externalUrl, externalUrlIndex) => {
+                        if (externalUrlIndex >= 2) return;
+                        defaultProperties.buttons.push({ label: `View on ${externalUrl.Name}`, url: externalUrl.Url });
+                    })
                 }
 
                 switch (NPItem.Type) {
                     case "Episode": {
                         // prettier-ignore
-                        const seasonNum = NPItem.ParentIndexNumber
+                        const seasonNum = NPItem.ParentIndexNumber;
                         // prettier-ignore
                         const episodeNum = NPItem.IndexNumber;
 
-                        rpc.setActivity({
+                        await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.SeriesName} ${
-                                seasonNum ? `S${seasonNum.toString().padStart(2, "0")}` : ""
-                            }${episodeNum ? `E${episodeNum.toString().padStart(2, "0")}` : ""}`,
-                            state: `${NPItem.Name}`,
+                            details: `${NPItem.SeriesName}${seasonNum > 1 ? ` ${NPItem.SeasonName}` : ''}`,
+                            state: `${
+                                seasonNum ? `S1${seasonNum}:` : ""
+                            }${episodeNum ? `E${episodeNum}` : ""} - ${NPItem.Name}`,
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.SeriesId}/Images/Primary`,
                         });
                         break;
                     }
                     case "Movie": {
-                        rpc.setActivity({
+                        rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`,
+                            details: `${NPItem.Name}${NPItem.ProductionYear ? ` (${NPItem.ProductionYear})` : ""}`,
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.Id}/Images/Primary`,
                         });
                         break;
                     }
                     case "MusicVideo": {
                         const artists = NPItem.Artists.splice(0, 3);
-                        rpc.setActivity({
+                        rpc.user?.setActivity({
                             ...defaultProperties,
                             details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`,
                             state: `By ${artists.length ? artists.join(", ") : "Unknown Artist"}`,
@@ -626,7 +637,7 @@ let connectRPCTimeout;
                         const artists = NPItem.Artists.splice(0, 3);
                         const albumArtists = NPItem.AlbumArtists.map((ArtistInfo) => ArtistInfo.Name).splice(0, 3);
 
-                        rpc.setActivity({
+                        rpc.user?.setActivity({
                             ...defaultProperties,
                             details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`,
                             state: `By ${
@@ -641,7 +652,7 @@ let connectRPCTimeout;
                         break;
                     }
                     default:
-                        rpc.setActivity({
+                        rpc.user?.setActivity({
                             ...defaultProperties,
                             details: "Watching Other Content",
                             state: NPItem.Name,
@@ -649,7 +660,7 @@ let connectRPCTimeout;
                 }
             } else {
                 logger.debug("No session, clearing activity");
-                if (rpc) await rpc.clearActivity();
+                if (rpc) await rpc.user?.clearActivity();
             }
         } catch (error) {
             logger.error(`Failed to set activity: ${error}`);
