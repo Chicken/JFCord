@@ -604,11 +604,10 @@ let connectRPCTimeout;
                     defaultProperties.endTimestamp = endTimestamp;
                 }
                 if (showExternalButtons && NPItem.ExternalUrls) {
-                    defaultProperties.buttons = [];
-                    NPItem.ExternalUrls.forEach((externalUrl, externalUrlIndex) => {
-                        if (externalUrlIndex >= 2) return;
-                        defaultProperties.buttons.push({ label: `View on ${externalUrl.Name}`, url: externalUrl.Url });
-                    });
+                    defaultProperties.buttons = NPItem.ExternalUrls.slice(0, 2).map(({ Name, Url }) => ({
+                        label: `View on ${Name}`,
+                        url: Url,
+                    }));
                 }
 
                 switch (NPItem.Type) {
@@ -629,7 +628,7 @@ let connectRPCTimeout;
                         break;
                     }
                     case "Movie": {
-                        rpc.user?.setActivity({
+                        await rpc.user?.setActivity({
                             ...defaultProperties,
                             details: `${NPItem.Name}${NPItem.ProductionYear ? ` (${NPItem.ProductionYear})` : ""}`,
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.Id}/Images/Primary`,
@@ -638,7 +637,7 @@ let connectRPCTimeout;
                     }
                     case "MusicVideo": {
                         const artists = NPItem.Artists.splice(0, 3);
-                        rpc.user?.setActivity({
+                        await rpc.user?.setActivity({
                             ...defaultProperties,
                             details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`,
                             state: `By ${artists.length ? artists.join(", ") : "Unknown Artist"}`,
@@ -650,7 +649,7 @@ let connectRPCTimeout;
                         const artists = NPItem.Artists.splice(0, 3);
                         const albumArtists = NPItem.AlbumArtists.map((ArtistInfo) => ArtistInfo.Name).splice(0, 3);
 
-                        rpc.user?.setActivity({
+                        await rpc.user?.setActivity({
                             ...defaultProperties,
                             details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`,
                             state: `By ${
@@ -665,7 +664,7 @@ let connectRPCTimeout;
                         break;
                     }
                     default:
-                        rpc.user?.setActivity({
+                        await rpc.user?.setActivity({
                             ...defaultProperties,
                             details: "Watching Other Content",
                             state: NPItem.Name,
