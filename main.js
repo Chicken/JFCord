@@ -619,8 +619,8 @@ let connectRPCTimeout;
 
                         await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.SeriesName}${NPItem.SeasonName ? ` ${NPItem.SeasonName}` : ""}`,
-                            state: `${seasonNum ? `S1${seasonNum}:` : ""}${episodeNum ? `E${episodeNum}` : ""} - ${
+                            details: `${NPItem.SeriesName}${NPItem.SeasonName ? ` - ${NPItem.SeasonName}` : ""}`,
+                            state: `${seasonNum ? `S1${seasonNum}:` : ""}${episodeNum ? `E${episodeNum} - ` : ""}${
                                 NPItem.Name
                             }`,
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.SeriesId}/Images/Primary`,
