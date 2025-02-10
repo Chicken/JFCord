@@ -622,10 +622,10 @@ let connectRPCTimeout;
 
                         await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.SeriesName}${NPItem.SeasonName ? ` ${NPItem.SeasonName}` : ""}`,
+                            details: `${NPItem.SeriesName}${NPItem.SeasonName ? ` ${NPItem.SeasonName}` : ""}`.slice(0, 128),
                             state: `${seasonNum ? `S${seasonNum}:` : ""}${episodeNum ? `E${episodeNum} - ` : ""}${
                                 NPItem.Name
-                            }`,
+                            }`.slice(0, 128),
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.SeriesId}/Images/Primary`,
                         });
                         break;
@@ -633,7 +633,7 @@ let connectRPCTimeout;
                     case "Movie": {
                         await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.Name}${NPItem.ProductionYear ? ` (${NPItem.ProductionYear})` : ""}`,
+                            details: `${NPItem.Name}${NPItem.ProductionYear ? ` (${NPItem.ProductionYear})` : ""}`.slice(0, 128),
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.Id}/Images/Primary`,
                         });
                         break;
@@ -642,8 +642,8 @@ let connectRPCTimeout;
                         const artists = NPItem.Artists.splice(0, 3);
                         await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`,
-                            state: `By ${artists.length ? artists.join(", ") : "Unknown Artist"}`,
+                            details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`.slice(0, 128),
+                            state: `By ${artists.length ? artists.join(", ") : "Unknown Artist"}`.slice(0, 128),
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.Id}/Images/Primary`,
                         });
                         break;
@@ -654,14 +654,14 @@ let connectRPCTimeout;
 
                         await rpc.user?.setActivity({
                             ...defaultProperties,
-                            details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`,
+                            details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`.slice(0, 128),
                             state: `By ${
                                 artists.length
                                     ? artists.join(", ")
                                     : albumArtists.length
                                     ? albumArtists.join(", ")
                                     : "Unknown Artist"
-                            }`,
+                            }`.slice(0, 128),
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.Id}/Images/Primary`,
                         });
                         break;
