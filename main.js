@@ -639,11 +639,11 @@ let connectRPCTimeout;
                         break;
                     }
                     case "MusicVideo": {
-                        const artists = NPItem.Artists.splice(0, 3);
+                        // const artists = NPItem.Artists.splice(0, 3);
                         await rpc.user?.setActivity({
                             ...defaultProperties,
                             details: `${NPItem.Name} ${NPItem.ProductionYear ? `(${NPItem.ProductionYear})` : ""}`.slice(0, 128),
-                            state: `By ${artists.length ? artists.join(", ") : "Unknown Artist"}`.slice(0, 128),
+                            // state: `By ${artists.length ? artists.join(", ") : "Unknown Artist"}`.slice(0, 128),
                             largeImageKey: `${jfc.serverAddress}/Items/${NPItem.Id}/Images/Primary`,
                         });
                         break;
