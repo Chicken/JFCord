@@ -519,7 +519,7 @@ let connectRPCTimeout;
         if (!data) return logger.warn("No selected server");
 
         jfc = new JFClient(data, {
-			appName: name,
+            appName: name,
             deviceName: name,
             deviceId: /** @type {string} */ (store.get("UUID")),
             deviceVersion: version,
@@ -701,7 +701,7 @@ let connectRPCTimeout;
         }
 
         let client = new JFClient(data, {
-			appName: name,
+            appName: name,
             deviceName: name,
             deviceId: /** @type {string} */ (store.get("UUID")),
             deviceVersion: version,
