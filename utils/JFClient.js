@@ -10,6 +10,7 @@ class JFClient {
      * @param {string} serverCredentials.password
      *
      * @param {Object} deviceInfo
+     * @param {string} deviceInfo.appName
      * @param {string} deviceInfo.deviceName
      * @param {string} deviceInfo.deviceId
      * @param {string} deviceInfo.deviceVersion,
@@ -22,6 +23,7 @@ class JFClient {
         this.username = serverCredentials.username;
         this.password = serverCredentials.password;
 
+        this.appName = deviceInfo.appName;
         this.deviceName = deviceInfo.deviceName;
         this.deviceId = deviceInfo.deviceId;
         this.deviceVersion = deviceInfo.deviceVersion;
@@ -45,12 +47,25 @@ class JFClient {
     }
 
     get headers() {
-        const headers = {};
+        const headers = {
+            "User-Agent": `${this.appName}/${this.deviceVersion}`,
+            "Authorization": this.authorization,
+        };
 
-        headers["User-Agent"] = `${this.deviceName}/${this.deviceVersion}`;
-        if (this.accessToken) headers["X-Emby-Token"] = this.accessToken;
+        if (this.accessToken) {
+            headers["Authorization"] += `, Token="${this.accessToken}"`;
+        }
 
         return headers;
+    }
+
+    get authorization() {
+        return [
+            `MediaBrowser Client="${this.appName}"`,
+            `Device="${this.deviceName}"`,
+            `DeviceId="${this.deviceId}"`,
+            `Version="${this.deviceVersion}"`,
+        ].join(", ");
     }
 
     /**
@@ -97,7 +112,7 @@ class JFClient {
                 Pw: this.password,
             },
             {
-                Authorization: `Emby Client=Other, Device=${this.deviceName}, DeviceId=${this.deviceId}, Version=${this.deviceVersion}`,
+                Authorization: this.authorization,
             }
         );
         this.accessToken = res.AccessToken;
