@@ -4,17 +4,21 @@ on:
   push:
     tags:
       - v*
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   release:
-    name: Publish 
-    runs-on: ubuntu-latest
+    name: Publish
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           node-version: 16
           cache: yarn
@@ -27,7 +31,8 @@ jobs:
           wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo gpg --dearmor -o /etc/apt/keyrings/winehq-archive.key -
           sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/noble/winehq-noble.sources
           sudo apt update
-          sudo apt install --install-recommends wine-stable
+          sudo apt install --install-recommends winehq-stable
+          wine --version
 
       - name: Install dependencies
         run: yarn --immutable
@@ -38,6 +43,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with: 
+        uses: actions/upload-artifact@v7
+        with:
           path: dist/*.AppImage
